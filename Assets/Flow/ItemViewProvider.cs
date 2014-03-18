@@ -1,0 +1,36 @@
+﻿using strange.framework.api;
+using System;
+using UnityEngine;
+namespace ca.HenrySoftware.Flow
+{
+	internal class ItemViewProvider : IInstanceProvider
+	{
+		private Transform _parent;
+		private GameObject _prefab;
+		private const string _name = "ItemView";
+		private int _id;
+		public ItemViewProvider(Transform parent)
+		{
+			_parent = parent;
+		}
+		public T GetInstance<T>()
+		{
+			object instance = GetInstance(typeof(T));
+			T value = (T)instance;
+			return value;
+		}
+		public object GetInstance(Type key)
+		{
+			if (_prefab == null)
+			{
+				_prefab = Resources.Load<GameObject>(_name);
+			}
+			GameObject instance = GameObject.Instantiate(_prefab) as GameObject;
+			instance.name = _name + _id;
+			instance.transform.position = new Vector3(_id, 0.0f, _id);
+			_id++;
+			instance.transform.parent = _parent.transform;
+			return instance;
+		}
+	}
+}
