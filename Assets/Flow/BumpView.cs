@@ -45,9 +45,9 @@ namespace ca.HenrySoftware.Flow
 		private void ScaleUp(GameObject o)
 		{
 			LeanTween.cancel(o, _tweenBack);
-			_tweenShakeX = LeanTween.rotateAround(o, Vector3.up, 1f, 0.2f).setEase(LeanTweenType.easeShake).setLoopClamp().setRepeat(-1).id;
-			_tweenShakeY = LeanTween.rotateAround(o, Vector3.right, 1f, 0.3f).setEase(LeanTweenType.easeShake).setLoopClamp().setRepeat(-1).setDelay(0.05f).id;
-			_tweenShakeZ = LeanTween.rotateAround(o, Vector3.forward, 1f, 0.4f).setEase(LeanTweenType.easeShake).setLoopClamp().setRepeat(-1).setDelay(0.1f).id;
+			_tweenShakeX = LeanTween.rotateAround(o, Vector3.up, 1f, 0.2f).setEase(LeanTweenType.easeShake).setRepeat(-1).id;
+			_tweenShakeY = LeanTween.rotateAround(o, Vector3.right, 1f, 0.3f).setEase(LeanTweenType.easeShake).setRepeat(-1).setDelay(0.05f).id;
+			_tweenShakeZ = LeanTween.rotateAround(o, Vector3.back, 1f, 0.4f).setEase(LeanTweenType.easeShake).setRepeat(-1).setDelay(0.1f).id;
 			LeanTween.cancel(o, _tweenUp);
 			LeanTween.cancel(o, _tweenDown);
 			Vector3 to = Vector3.Scale(_origiginalScale, new Vector3(Scale, Scale, 1.0f));

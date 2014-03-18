@@ -14,6 +14,7 @@ namespace ca.HenrySoftware.Flow
 		private List<GameObject> _views = new List<GameObject>();
 		private int _clamp;
 		private int _current;
+		private int[] _tweens;
 		private int _tweenInertia;
 		private int _poolLimit = 10;
 		[Inject]
@@ -71,8 +72,9 @@ namespace ca.HenrySoftware.Flow
 			for (int i = 0; i < _views.Count; i++)
 			{
 				int delta = (target - i) * -1;
+				LeanTween.cancel(_views[i], _tweens[i]);
 				Vector3 to = new Vector3(delta * Offset, 0.0f, Mathf.Abs(delta) * Offset);
-				LeanTween.moveLocal(_views[i], to, TimeTween).setEase(LeanTweenType.easeSpring);
+				_tweens[i] = LeanTween.moveLocal(_views[i], to, TimeTween).setEase(LeanTweenType.easeSpring).id;
 			}
 			_current = target;
 		}
@@ -94,6 +96,7 @@ namespace ca.HenrySoftware.Flow
 				{
 					newP = new Vector3(newX, p.y, Mathf.Abs(newX));
 				}
+				LeanTween.cancel(_views[i], _tweens[i]);
 				_views[i].transform.localPosition = newP;
 			}
 		}
@@ -121,6 +124,8 @@ namespace ca.HenrySoftware.Flow
 			{
 				Add(i);
 			}
+			_tweens = new int[_views.Count];
+			_clamp = _views.Count * Offset + 1;
 		}
 		private void Add()
 		{
@@ -132,7 +137,6 @@ namespace ca.HenrySoftware.Flow
 			GameObject itemView = ItemViewPool.GetInstance();
 			itemView.GetComponentInChildren<TextMesh>().text = _data[i].ToString("X");
 			_views.Add(itemView);
-			_clamp = _views.Count * Offset + 1;
 		}
 		private void Remove()
 		{
