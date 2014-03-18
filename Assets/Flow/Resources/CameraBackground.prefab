@@ -51,7 +51,7 @@ Camera:
   near clip plane: .300000012
   far clip plane: 10
   field of view: 60
-  orthographic: 1
+  orthographic: 0
   orthographic size: 1
   m_Depth: -1
   m_CullingMask:
@@ -111,16 +111,7 @@ MonoBehaviour:
   m_Script: {fileID: -1518784480, guid: 20c2a163775f09b4cafa29b19d0c9204, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  friendlyGestures:
-  - {fileID: 11400008, guid: 5790dafa068a27a47a8d4c565b718f38, type: 2}
-  - {fileID: 11400006, guid: 5790dafa068a27a47a8d4c565b718f38, type: 2}
-  - {fileID: 11400004, guid: 5790dafa068a27a47a8d4c565b718f38, type: 2}
-  - {fileID: 11400000, guid: 5790dafa068a27a47a8d4c565b718f38, type: 2}
-  - {fileID: 11400008, guid: 5790dafa068a27a47a8d4c565b718f38, type: 2}
-  - {fileID: 11400008, guid: 5790dafa068a27a47a8d4c565b718f38, type: 2}
-  - {fileID: 11400006, guid: 5790dafa068a27a47a8d4c565b718f38, type: 2}
-  - {fileID: 11400004, guid: 5790dafa068a27a47a8d4c565b718f38, type: 2}
-  - {fileID: 11400000, guid: 5790dafa068a27a47a8d4c565b718f38, type: 2}
+  friendlyGestures: []
   projection: 0
   projectionNormal: {x: 0, y: 0, z: 1}
   movementThreshold: .5

@@ -88,11 +88,7 @@ MonoBehaviour:
   m_Script: {fileID: -1518784480, guid: 20c2a163775f09b4cafa29b19d0c9204, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  friendlyGestures:
-  - {fileID: 11400004, guid: 1f18966a97c8bd4408be9844a6346f26, type: 2}
-  - {fileID: 11400008}
-  - {fileID: 11400006}
-  - {fileID: 11400004}
+  friendlyGestures: []
   projection: 0
   projectionNormal: {x: 0, y: 0, z: 1}
   movementThreshold: .5
@@ -120,11 +116,7 @@ MonoBehaviour:
   m_Script: {fileID: 438491968, guid: 20c2a163775f09b4cafa29b19d0c9204, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  friendlyGestures:
-  - {fileID: 11400004, guid: 1f18966a97c8bd4408be9844a6346f26, type: 2}
-  - {fileID: 11400008}
-  - {fileID: 11400006}
-  - {fileID: 11400000}
+  friendlyGestures: []
   ignoreChildren: 0
 --- !u!114 &11400006
 MonoBehaviour:
@@ -137,11 +129,7 @@ MonoBehaviour:
   m_Script: {fileID: 1088824302, guid: 20c2a163775f09b4cafa29b19d0c9204, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  friendlyGestures:
-  - {fileID: 11400004, guid: 1f18966a97c8bd4408be9844a6346f26, type: 2}
-  - {fileID: 11400008}
-  - {fileID: 11400004}
-  - {fileID: 11400000}
+  friendlyGestures: []
   ignoreChildren: 0
 --- !u!114 &11400008
 MonoBehaviour:
@@ -154,11 +142,7 @@ MonoBehaviour:
   m_Script: {fileID: 1235405773, guid: 20c2a163775f09b4cafa29b19d0c9204, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  friendlyGestures:
-  - {fileID: 11400004, guid: 1f18966a97c8bd4408be9844a6346f26, type: 2}
-  - {fileID: 11400006}
-  - {fileID: 11400004}
-  - {fileID: 11400000}
+  friendlyGestures: []
   timeLimit: Infinity
   distanceLimit: Infinity
   combineTouchPointsInterval: .300000012
