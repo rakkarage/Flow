@@ -10,7 +10,7 @@ namespace ca.HenrySoftware.Flow
 		public float TimeTween = 0.333f;
 		public int Offset = 1;
 		public bool Clamp = true;
-		private List<int> _data = Enumerable.Range(111, 333).ToList();
+		private List<int> _data = Enumerable.Range(111, 222).ToList();
 		private List<GameObject> _views = new List<GameObject>();
 		private int _clamp;
 		private int _current;
