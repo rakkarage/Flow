@@ -99,12 +99,12 @@ namespace ca.HenrySoftware.Flow
 		}
 		private float ClampXMin(int index, bool negative)
 		{
-			float newIndex = negative ? index : newIndex = Views.Count - index;
+			float newIndex = negative ? index : newIndex = Views.Count - index - 1;
 			return -(_clamp - (Offset * newIndex));
 		}
 		private float ClampXMax(int index, bool negative)
 		{
-			float newIndex = negative ? index : newIndex = Views.Count - index;
+			float newIndex = negative ? index : newIndex = Views.Count - index - 1;
 			return _clamp - (Offset * newIndex);
 		}
 		public void Inertia(float velocity)
@@ -136,6 +136,7 @@ namespace ca.HenrySoftware.Flow
 		}
 		private void Remove()
 		{
+			// todo: !!!
 		}
 		protected void OnGUI()
 		{
