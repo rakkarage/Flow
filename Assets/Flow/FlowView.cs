@@ -10,13 +10,14 @@ namespace ca.HenrySoftware.Flow
 		public float TimeTween = 0.333f;
 		public int Offset = 1;
 		public bool Clamp = true;
-		private List<int> _data = Enumerable.Range(111, 222).ToList();
-		private List<GameObject> _views = new List<GameObject>();
 		private int _clamp;
 		private int _current;
-		private int[] _tweens;
+		private const int _startAt = 111;
+		private const int _startCount = 100;
+		private List<GameObject> _views = new List<GameObject>(_startCount);
+		private List<int> _data = Enumerable.Range(_startAt, _startCount).ToList();
+		private List<int> _tweens = Enumerable.Repeat(-1, _startCount).ToList();
 		private int _tweenInertia;
-		private int _poolLimit = 10;
 		[Inject]
 		public IPool<GameObject> ItemViewPool { get; set; }
 		[PostConstruct]
@@ -72,7 +73,7 @@ namespace ca.HenrySoftware.Flow
 			for (int i = 0; i < _views.Count; i++)
 			{
 				int delta = (target - i) * -1;
-				LeanTween.cancel(_views[i], _tweens[i]);
+				if (_tweens[i] != null) LeanTween.cancel(_views[i], _tweens[i]);
 				Vector3 to = new Vector3(delta * Offset, 0.0f, Mathf.Abs(delta) * Offset);
 				_tweens[i] = LeanTween.moveLocal(_views[i], to, TimeTween).setEase(LeanTweenType.easeSpring).id;
 			}
@@ -96,7 +97,7 @@ namespace ca.HenrySoftware.Flow
 				{
 					newP = new Vector3(newX, p.y, Mathf.Abs(newX));
 				}
-				LeanTween.cancel(_views[i], _tweens[i]);
+				if (_tweens[i] != null) LeanTween.cancel(_views[i], _tweens[i]);
 				_views[i].transform.localPosition = newP;
 			}
 		}
@@ -124,19 +125,20 @@ namespace ca.HenrySoftware.Flow
 			{
 				Add(i);
 			}
-			_tweens = new int[_views.Count];
-			_clamp = _views.Count * Offset + 1;
 		}
 		private void Add()
 		{
 			_data.Add(_data.Count);
-			Add(_data.Count);
+			Add(_data.Count - 1);
 		}
 		private void Add(int i)
 		{
 			GameObject itemView = ItemViewPool.GetInstance();
 			itemView.GetComponentInChildren<TextMesh>().text = _data[i].ToString("X");
 			_views.Add(itemView);
+			if (_views.Count > _tweens.Capacity)
+				_tweens.Capacity = _views.Count;
+			_clamp = _views.Count * Offset + 1;
 		}
 		private void Remove()
 		{
