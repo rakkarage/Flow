@@ -13,6 +13,7 @@ namespace ca.HenrySoftware.Flow
 		private int _clamp;
 		private int _current;
 		private int _tweenInertia;
+		private int _poolLimit = 10;
 		[Inject]
 		public IPool<GameObject> ItemViewPool { get; set; }
 		[PostConstruct]

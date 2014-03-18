@@ -338,7 +338,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 6500000, guid: 1f18966a97c8bd4408be9844a6346f26, type: 2}
       propertyPath: m_Size.x
-      value: 18.4600143
+      value: 18.4637756
       objectReference: {fileID: 0}
     - target: {fileID: 6500000, guid: 1f18966a97c8bd4408be9844a6346f26, type: 2}
       propertyPath: m_Size.y
@@ -429,7 +429,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 18.4600143, y: 11.5470047, z: .00999999978}
+  m_Size: {x: 18.4637756, y: 11.5470047, z: .00999999978}
   m_Center: {x: 0, y: 0, z: 10}
 --- !u!114 &1704976894
 MonoBehaviour:
