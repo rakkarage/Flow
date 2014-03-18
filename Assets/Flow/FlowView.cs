@@ -45,7 +45,7 @@ namespace ca.HenrySoftware.Flow
 		}
 		public void Flow()
 		{
-			Flow(GetClosestIndex());
+			FlowSnap(GetClosestIndex());
 		}
 		private int GetIndex(GameObject view)
 		{
@@ -59,15 +59,15 @@ namespace ca.HenrySoftware.Flow
 			}
 			return found;
 		}
-		public void Flow(GameObject target)
+		public void FlowTo(GameObject target)
 		{
 			int found = GetIndex(target);
 			if (found != -1)
 			{
-				Flow(found);
+				FlowSnap(found);
 			}
 		}
-		public void Flow(int target)
+		public void FlowSnap(int target)
 		{
 			for (int i = 0; i < _views.Count; i++)
 			{
@@ -78,7 +78,7 @@ namespace ca.HenrySoftware.Flow
 			}
 			_current = target;
 		}
-		public void Flow(float offset)
+		public void FlowPan(float offset)
 		{
 			for (int i = 0; i < _views.Count; i++)
 			{
@@ -112,7 +112,7 @@ namespace ca.HenrySoftware.Flow
 		}
 		public void Inertia(float velocity)
 		{
-			_tweenInertia = LeanTween.value(gameObject, Flow, velocity, 0, 0.5f).setEase(LeanTweenType.easeInExpo).setOnComplete(Flow).id;
+			_tweenInertia = LeanTween.value(gameObject, FlowPan, velocity, 0, 0.5f).setEase(LeanTweenType.easeInExpo).setOnComplete(Flow).id;
 		}
 		public void InertiaStop()
 		{
@@ -146,14 +146,14 @@ namespace ca.HenrySoftware.Flow
 		{
 			if (_current < _views.Count - 1)
 			{
-				Flow(_current + 1);
+				FlowSnap(_current + 1);
 			}
 		}
 		public void Prev()
 		{
 			if (_current > 0)
 			{
-				Flow(_current - 1);
+				FlowSnap(_current - 1);
 			}
 		}
 		protected void OnGUI()

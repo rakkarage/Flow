@@ -58,15 +58,15 @@ namespace ca.HenrySoftware.Flow
 		}
 		private void HandleFlowTo(GameObject value)
 		{
-			FlowView.Flow(value);
+			FlowView.FlowTo(value);
 		}
 		private void HandleFlowSnap(int value)
 		{
-			FlowView.Flow(value);
+			FlowView.FlowSnap(value);
 		}
 		private void HandleFlowPan(float value)
 		{
-			FlowView.Flow(value);
+			FlowView.FlowPan(value);
 		}
 		private void HandleInertia(float value)
 		{
