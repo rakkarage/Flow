@@ -6,21 +6,16 @@ namespace ca.HenrySoftware.Flow
 	public class BumpView : View
 	{
 		public float ScaleTween = 1.1f;
-		public float RotateTween = 5f;
 		public float TimeTween = .333f;
 		private Vector3 _originalScale;
-		private Vector3 _originalRotation;
-		private int _tweenScaleUp;
-		private int _tweenScaleDown;
-		private int _tweenRotateUp;
-		private int _tweenRotateDown;
+		private int _tweenUp;
+		private int _tweenDown;
 		[Inject]
 		public InertiaStopSignal InertiaStopSignal { get; set; }
 		[PostConstruct]
 		public void PostConstruct()
 		{
 			_originalScale = gameObject.transform.localScale;
-			_originalRotation = gameObject.transform.localRotation.eulerAngles;
 		}
 		public void OnEnable()
 		{
@@ -43,12 +38,10 @@ namespace ca.HenrySoftware.Flow
 		}
 		private void ScaleUp(GameObject o)
 		{
-			CancelTweens(o);
-			Vector3 rotateTo = _originalRotation +
-				new Vector3(Random.Range(-RotateTween, RotateTween), Random.Range(-RotateTween, RotateTween), Random.Range(-RotateTween, RotateTween));
-			_tweenRotateUp = LeanTween.rotateLocal(o, rotateTo, TimeTween).setEase(LeanTweenType.easeInOutCubic).setLoopPingPong().id;
+			LeanTween.cancel(o, _tweenUp);
+			LeanTween.cancel(o, _tweenDown);
 			Vector3 to = Vector3.Scale(_originalScale, new Vector3(ScaleTween, ScaleTween, 1f));
-			_tweenScaleUp = LeanTween.scale(o, to, TimeTween).setEase(LeanTweenType.easeSpring).id;
+			_tweenUp = LeanTween.scale(o, to, TimeTween).setEase(LeanTweenType.easeSpring).id;
 		}
 		private void HandleRelease(object sender, TouchScript.Events.GestureStateChangeEventArgs e)
 		{
@@ -60,16 +53,9 @@ namespace ca.HenrySoftware.Flow
 		}
 		private void ScaleDown(GameObject o)
 		{
-			CancelTweens(o);
-			_tweenScaleDown = LeanTween.rotateLocal(o, _originalRotation, TimeTween).setEase(LeanTweenType.easeSpring).id;
-			_tweenRotateDown = LeanTween.scale(o, _originalScale, TimeTween).setEase(LeanTweenType.easeSpring).id;
-		}
-		private void CancelTweens(GameObject o)
-		{
-			LeanTween.cancel(o, _tweenScaleUp);
-			LeanTween.cancel(o, _tweenScaleDown);
-			LeanTween.cancel(o, _tweenRotateUp);
-			LeanTween.cancel(o, _tweenScaleDown);
+			LeanTween.cancel(o, _tweenUp);
+			LeanTween.cancel(o, _tweenDown);
+			_tweenDown = LeanTween.scale(o, _originalScale, TimeTween).setEase(LeanTweenType.easeSpring).id;
 		}
 	}
 }
