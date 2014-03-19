@@ -16,7 +16,7 @@ namespace ca.HenrySoftware.Flow
 		private const int _startCount = 100;
 		private List<GameObject> _views = new List<GameObject>(_startCount);
 		private List<int> _data = Enumerable.Range(_startAt, _startCount).ToList();
-		private List<int> _tweens = Enumerable.Repeat(-1, _startCount).ToList();
+		private List<int> _tweens = Enumerable.Repeat(0, _startCount).ToList();
 		private int _tweenInertia;
 		[Inject]
 		public IPool<GameObject> ItemViewPool { get; set; }
@@ -73,7 +73,7 @@ namespace ca.HenrySoftware.Flow
 			for (int i = 0; i < _views.Count; i++)
 			{
 				int delta = (target - i) * -1;
-				if (_tweens[i] != null) LeanTween.cancel(_views[i], _tweens[i]);
+				LeanTween.cancel(_views[i], _tweens[i]);
 				Vector3 to = new Vector3(delta * Offset, 0.0f, Mathf.Abs(delta) * Offset);
 				_tweens[i] = LeanTween.moveLocal(_views[i], to, TimeTween).setEase(LeanTweenType.easeSpring).id;
 			}
@@ -97,7 +97,7 @@ namespace ca.HenrySoftware.Flow
 				{
 					newP = new Vector3(newX, p.y, Mathf.Abs(newX));
 				}
-				if (_tweens[i] != null) LeanTween.cancel(_views[i], _tweens[i]);
+				LeanTween.cancel(_views[i], _tweens[i]);
 				_views[i].transform.localPosition = newP;
 			}
 		}
