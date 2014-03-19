@@ -28,6 +28,7 @@ namespace ca.HenrySoftware.Flow
 			ItemViewPool.inflationType = PoolInflationType.INCREMENT;
 			ItemViewPool.overflowBehavior = PoolOverflowBehavior.WARNING;
 			Load();
+			_clamp = _views.Count * Offset + 1;
 		}
 		public int GetClosestIndex()
 		{
@@ -123,26 +124,10 @@ namespace ca.HenrySoftware.Flow
 		{
 			for (int i = 0; i < _data.Count; i++)
 			{
-				Add(i);
+				GameObject itemView = ItemViewPool.GetInstance();
+				itemView.GetComponentInChildren<TextMesh>().text = _data[i].ToString("X");
+				_views.Add(itemView);
 			}
-		}
-		private void Add()
-		{
-			_data.Add(_data.Count);
-			Add(_data.Count - 1);
-		}
-		private void Add(int i)
-		{
-			GameObject itemView = ItemViewPool.GetInstance();
-			itemView.GetComponentInChildren<TextMesh>().text = _data[i].ToString("X");
-			_views.Add(itemView);
-			if (_views.Count > _tweens.Capacity)
-				_tweens.Capacity = _views.Count;
-			_clamp = _views.Count * Offset + 1;
-		}
-		private void Remove()
-		{
-			// todo: !!!
 		}
 		public void Next()
 		{
@@ -176,16 +161,6 @@ namespace ca.HenrySoftware.Flow
 			centeredStyle.alignment = TextAnchor.MiddleCenter;
 			string text = string.Format("{0}/{1}", _current + 1, _views.Count);
 			GUI.Box(new Rect(offset.x, offset.y, size, size), text, centeredStyle);
-			offset.y += size + offset.x;
-			if (GUI.Button(new Rect(offset.x, offset.y, size, size), "+"))
-			{
-				Add();
-			}
-			offset.y += size + offset.x;
-			if (GUI.Button(new Rect(offset.x, offset.y, size, size), "-"))
-			{
-				Remove();
-			}
 		}
 	}
 }
