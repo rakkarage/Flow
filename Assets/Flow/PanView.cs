@@ -32,7 +32,7 @@ namespace ca.HenrySoftware.Flow
 						FlowPanSignal.Dispatch(target.LocalDeltaPosition.x);
 					break;
 				case Gesture.GestureState.Ended:
-					float velocity = (target.LocalTransformCenter.x - target.PreviousLocalTransformCenter.x) * 0.5f;
+					float velocity = target.LocalTransformCenter.x - target.PreviousLocalTransformCenter.x;
 					if (Mathf.Abs(velocity) > Threshold)
 						InertiaSignal.Dispatch(velocity);
 					else

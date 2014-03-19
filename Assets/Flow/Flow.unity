@@ -104,6 +104,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TimeTween: .333000004
+  TimeInertia: .5
   Offset: 1
   Clamp: 1
 --- !u!1 &25
@@ -432,6 +433,10 @@ Prefab:
     - target: {fileID: 400000, guid: 1f18966a97c8bd4408be9844a6346f26, type: 2}
       propertyPath: m_LocalRotation.w
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6500000, guid: 1f18966a97c8bd4408be9844a6346f26, type: 2}
+      propertyPath: m_Size.x
+      value: 18.4876022
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1f18966a97c8bd4408be9844a6346f26, type: 2}

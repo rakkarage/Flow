@@ -8,6 +8,7 @@ namespace ca.HenrySoftware.Flow
 	public class FlowView : View
 	{
 		public float TimeTween = 0.333f;
+		public float TimeInertia = 0.5f;
 		public int Offset = 1;
 		public bool Clamp = true;
 		private int _clamp;
@@ -114,7 +115,7 @@ namespace ca.HenrySoftware.Flow
 		}
 		public void Inertia(float velocity)
 		{
-			_tweenInertia = LeanTween.value(gameObject, FlowPan, velocity, 0, 0.5f).setEase(LeanTweenType.easeInExpo).setOnComplete(Flow).id;
+			_tweenInertia = LeanTween.value(gameObject, FlowPan, velocity, 0, TimeInertia).setEase(LeanTweenType.easeInCirc).setOnComplete(Flow).id;
 		}
 		public void InertiaStop()
 		{
