@@ -23,7 +23,7 @@ namespace ca.HenrySoftware.Flow
 		[PostConstruct]
 		public void PostConstruct()
 		{
-			ItemViewPool.instanceProvider = new ItemViewProvider(transform);
+			ItemViewPool.instanceProvider = new ItemViewProvider(transform, Offset);
 			ItemViewPool.size = 0;
 			ItemViewPool.inflationType = PoolInflationType.INCREMENT;
 			ItemViewPool.overflowBehavior = PoolOverflowBehavior.WARNING;

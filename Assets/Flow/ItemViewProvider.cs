@@ -9,9 +9,11 @@ namespace ca.HenrySoftware.Flow
 		private GameObject _prefab;
 		private const string _name = "ItemView";
 		private int _id;
-		public ItemViewProvider(Transform parent)
+		private int _offset;
+		public ItemViewProvider(Transform parent, int offset)
 		{
 			_parent = parent;
+			_offset = offset;
 		}
 		public T GetInstance<T>()
 		{
@@ -27,7 +29,7 @@ namespace ca.HenrySoftware.Flow
 			}
 			GameObject instance = GameObject.Instantiate(_prefab) as GameObject;
 			instance.name = _name + _id;
-			instance.transform.position = new Vector3(_id, 0.0f, _id);
+			instance.transform.position = new Vector3(_id * _offset, 0.0f, _id * _offset);
 			_id++;
 			instance.transform.parent = _parent.transform;
 			return instance;
