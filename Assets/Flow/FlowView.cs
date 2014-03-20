@@ -15,7 +15,7 @@ namespace ca.HenrySoftware.Flow
 		private int _current;
 		private const int _limitSide = 4;
 		private const int _limit = (_limitSide * 2) + 1;
-		private List<int> _data = Enumerable.Range(111, 100).ToList();
+		private List<int> _data = Enumerable.Range(111, 10).ToList();
 		private List<GameObject> _views = Enumerable.Repeat((GameObject)null, _limit).ToList();
 		private List<int> _tweens = Enumerable.Repeat(0, _limit).ToList();
 		private int _tweenInertia;
@@ -74,10 +74,6 @@ namespace ca.HenrySoftware.Flow
 				FlowSnap(found);
 			}
 		}
-		private bool IsVisible(int dataIndex)
-		{
-			return (System.Math.Abs(dataIndex) < _limitSide);
-		}
 		private void FlowSnapItemCancel(int viewIndex)
 		{
 			LeanTween.cancel(_views[viewIndex], _tweens[viewIndex]);
@@ -92,10 +88,10 @@ namespace ca.HenrySoftware.Flow
 			List<GameObject> newViews = Enumerable.Repeat((GameObject)null, _limit).ToList();
 			for (int i = 0; i < _data.Count; i++)
 			{
-				int delta = (target - i) * -1;
-				int viewIndex = delta + _limitSide;
-				int oldDelta = (_current - i) * -1;
-				int oldViewIndex = oldDelta + _limitSide;
+				int delta = GetDelta(target, i);
+				int viewIndex = GetViewIndex(delta);
+				int oldDelta = GetDelta(_current, i);
+				int oldViewIndex = GetViewIndex(oldDelta);
 				bool isVisible = IsVisible(delta);
 				bool wasVisible = IsVisible(oldDelta);
 				if (wasVisible && !isVisible)
@@ -117,8 +113,8 @@ namespace ca.HenrySoftware.Flow
 			_views = newViews;
 			for (int i = 0; i < _data.Count; i++)
 			{
-				int delta = (target - i) * -1;
-				int viewIndex = delta + _limitSide;
+				int delta = GetDelta(target, i);
+				int viewIndex = GetViewIndex(delta);
 				bool isVisible = IsVisible(delta);
 				if (isVisible)
 				{
@@ -212,14 +208,20 @@ namespace ca.HenrySoftware.Flow
 		{
 			for (int i = 0; i < _data.Count && i < _limitSide; i++)
 			{
-				_views[GetViewIndex(0, i)] = Enter(_data[i]);
+				_views[GetViewIndex(GetDelta(0, i))] = Enter(_data[i]);
 			}
 		}
-		private int GetViewIndex(int target, int dataIndex)
+		private bool IsVisible(int dataIndex)
 		{
-			int delta = (target - dataIndex) * -1;
-			int viewIndex = delta + _limitSide;
-			return viewIndex;
+			return (System.Math.Abs(dataIndex) < _limitSide);
+		}
+		private int GetViewIndex(int delta)
+		{
+			return delta + _limitSide;
+		}
+		private int GetDelta(int target, int dataIndex)
+		{
+			return (target - dataIndex) * -1;
 		}
 		public void Next()
 		{
