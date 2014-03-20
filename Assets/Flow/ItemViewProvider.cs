@@ -29,9 +29,9 @@ namespace ca.HenrySoftware.Flow
 			}
 			GameObject instance = GameObject.Instantiate(_prefab) as GameObject;
 			instance.name = _name + _id;
+			instance.transform.parent = _parent.transform;
 			instance.transform.position = new Vector3(_id * _offset, 0.0f, _id * _offset);
 			_id++;
-			instance.transform.parent = _parent.transform;
 			return instance;
 		}
 	}

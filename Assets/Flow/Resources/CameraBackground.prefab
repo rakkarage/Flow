@@ -114,7 +114,7 @@ MonoBehaviour:
   friendlyGestures: []
   projection: 0
   projectionNormal: {x: 0, y: 0, z: 1}
-  movementThreshold: .5
+  movementThreshold: .100000001
 --- !u!114 &11400006
 MonoBehaviour:
   m_ObjectHideFlags: 1

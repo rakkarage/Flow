@@ -13,11 +13,11 @@ namespace ca.HenrySoftware.Flow
 		public bool Clamp = true;
 		private int _clamp;
 		private int _current;
-		private const int _startAt = 111;
-		private const int _startCount = 100;
-		private List<GameObject> _views = new List<GameObject>(_startCount);
-		private List<int> _data = Enumerable.Range(_startAt, _startCount).ToList();
-		private List<int> _tweens = Enumerable.Repeat(0, _startCount).ToList();
+		private const int _limitSide = 4;
+		private const int _limit = (_limitSide * 2) + 1;
+		private List<int> _data = Enumerable.Range(111, 100).ToList();
+		private List<GameObject> _views = Enumerable.Repeat((GameObject)null, _limit).ToList();
+		private List<int> _tweens = Enumerable.Repeat(0, _limit).ToList();
 		private int _tweenInertia;
 		[Inject]
 		public IPool<GameObject> ItemViewPool { get; set; }
@@ -25,11 +25,9 @@ namespace ca.HenrySoftware.Flow
 		public void PostConstruct()
 		{
 			ItemViewPool.instanceProvider = new ItemViewProvider(transform, Offset);
-			ItemViewPool.size = 0;
 			ItemViewPool.inflationType = PoolInflationType.INCREMENT;
-			ItemViewPool.overflowBehavior = PoolOverflowBehavior.WARNING;
 			Load();
-			_clamp = _views.Count * Offset + 1;
+			_clamp = _data.Count * Offset + 1;
 		}
 		public int GetClosestIndex()
 		{
@@ -37,11 +35,14 @@ namespace ca.HenrySoftware.Flow
 			float closestDistance = float.MaxValue;
 			for (int i = 0; i < _views.Count; i++)
 			{
-				float distance = (Vector3.zero - _views[i].transform.localPosition).sqrMagnitude;
-				if (distance < closestDistance)
+				if (_views[i])
 				{
-					closestIndex = i;
-					closestDistance = distance;
+					float distance = (Vector3.zero - _views[i].transform.localPosition).sqrMagnitude;
+					if (distance < closestDistance)
+					{
+						closestIndex = i;
+						closestDistance = distance;
+					}
 				}
 			}
 			return closestIndex;
@@ -55,9 +56,12 @@ namespace ca.HenrySoftware.Flow
 			int found = -1;
 			for (int i = 0; i < _views.Count; i++)
 			{
-				if (view == _views[i])
+				if (_views[i])
 				{
-					found = i;
+					if (view == _views[i])
+					{
+						found = i;
+					}
 				}
 			}
 			return found;
@@ -70,37 +74,108 @@ namespace ca.HenrySoftware.Flow
 				FlowSnap(found);
 			}
 		}
+		private bool IsVisible(int dataIndex)
+		{
+			return (System.Math.Abs(dataIndex) < _limitSide);
+		}
+		private void FlowSnapItemCancel(int viewIndex)
+		{
+			LeanTween.cancel(_views[viewIndex], _tweens[viewIndex]);
+		}
+		private void FlowSnapItem(int viewIndex, int delta)
+		{
+			Vector3 to = new Vector3(delta * Offset, 0.0f, Mathf.Abs(delta) * Offset);
+			_tweens[viewIndex] = LeanTween.moveLocal(_views[viewIndex], to, TimeTween).setEase(LeanTweenType.easeSpring).id;
+		}
 		public void FlowSnap(int target)
 		{
-			for (int i = 0; i < _views.Count; i++)
+			List<GameObject> newViews = Enumerable.Repeat((GameObject)null, _limit).ToList();
+			for (int i = 0; i < _data.Count; i++)
 			{
 				int delta = (target - i) * -1;
-				LeanTween.cancel(_views[i], _tweens[i]);
-				Vector3 to = new Vector3(delta * Offset, 0.0f, Mathf.Abs(delta) * Offset);
-				_tweens[i] = LeanTween.moveLocal(_views[i], to, TimeTween).setEase(LeanTweenType.easeSpring).id;
+				int viewIndex = delta + _limitSide;
+				int oldDelta = (_current - i) * -1;
+				int oldViewIndex = oldDelta + _limitSide;
+				bool isVisible = IsVisible(delta);
+				bool wasVisible = IsVisible(oldDelta);
+				if (wasVisible && !isVisible)
+				{
+					FlowSnapItemCancel(oldViewIndex);
+					Exit(_views[oldViewIndex]);
+					_views[oldViewIndex] = null;
+				}
+				else if (isVisible && !wasVisible)
+				{
+					newViews[viewIndex] = Enter(_data[i]);
+				}
+				else if (isVisible)
+				{
+					FlowSnapItemCancel(viewIndex);
+					newViews[viewIndex] = _views[oldViewIndex];
+				}
+			}
+			_views = newViews;
+			for (int i = 0; i < _data.Count; i++)
+			{
+				int delta = (target - i) * -1;
+				int viewIndex = delta + _limitSide;
+				bool isVisible = IsVisible(delta);
+				if (isVisible)
+				{
+					FlowSnapItem(viewIndex, delta);
+				}
 			}
 			_current = target;
 		}
+		private void FlowPanItem(int i, float y, float delta, bool negative)
+		{
+			Vector3 newP;
+			if (Clamp)
+			{
+				float clampX = Mathf.Clamp(delta, ClampXMin(i, negative), ClampXMax(i, negative));
+				float clampZ = Mathf.Clamp(Mathf.Abs(delta), 0.0f, ClampXMax(i, negative));
+				newP = new Vector3(clampX, y, clampZ);
+			}
+			else
+			{
+				newP = new Vector3(delta, y, Mathf.Abs(delta));
+			}
+			_views[i].transform.localPosition = newP;
+		}
 		public void FlowPan(float offset)
 		{
-			for (int i = 0; i < _views.Count; i++)
+			GameObject[] newViews = new GameObject[] { null };
+			for (int i = 0; i < _data.Count; i++)
 			{
-				Vector3 p = _views[i].transform.localPosition;
-				float newX = p.x + offset;
-				bool negative = newX < 0;
-				Vector3 newP;
-				if (Clamp)
+				//Vector3 p = _views[i].transform.localPosition;
+				//float newX = p.x + offset;
+				//bool negative = newX < 0;
+				//bool wasVisible = IsVisible(i);
+				//bool isVisible = IsVisible(newX);
+
+				if (IsVisible(i))
 				{
-					float clampX = Mathf.Clamp(newX, ClampXMin(i, negative), ClampXMax(i, negative));
-					float clampZ = Mathf.Clamp(Mathf.Abs(newX), 0.0f, ClampXMax(i, negative));
-					newP = new Vector3(clampX, p.y, clampZ);
+					int delta = ((int)offset - i) * -1;
+					int viewIndex = delta + _limitSide;
+					int oldDelta = (_current - i) * -1;
+					int oldViewIndex = oldDelta + _limitSide;
+					Debug.Log(i + ":" + delta + ":" + viewIndex + ":" + oldDelta + ":" + oldViewIndex);
 				}
-				else
-				{
-					newP = new Vector3(newX, p.y, Mathf.Abs(newX));
-				}
-				LeanTween.cancel(_views[i], _tweens[i]);
-				_views[i].transform.localPosition = newP;
+				//if (wasVisible && !isVisible)
+				//{
+				//	LeanTween.cancel(_views[i], _tweens[i]);
+				//	Exit(i);
+				//}
+				//else if (isVisible && !wasVisible)
+				//{
+				//	Enter(i, newOrder);
+				//	FlowPanItem(newOrder, p.y, newX, negative);
+				//}
+				//if (isVisible)
+				//{
+				//	LeanTween.cancel(_views[i], _tweens[i]);
+				//	FlowPanItem(newOrder, p.y, newX, negative);
+				//}
 			}
 		}
 		private float ClampXMin(int index, bool negative)
@@ -121,18 +196,34 @@ namespace ca.HenrySoftware.Flow
 		{
 			LeanTween.cancel(gameObject, _tweenInertia);
 		}
+		private GameObject Enter(int data)
+		{
+			GameObject view = ItemViewPool.GetInstance();
+			view.SetActive(true);
+			view.GetComponentInChildren<TextMesh>().text = data.ToString("X");
+			return view;
+		}
+		private void Exit(GameObject view)
+		{
+			view.SetActive(false);
+			ItemViewPool.ReturnInstance(view);
+		}
 		private void Load()
 		{
-			for (int i = 0; i < _data.Count; i++)
+			for (int i = 0; i < _data.Count && i < _limitSide; i++)
 			{
-				GameObject itemView = ItemViewPool.GetInstance();
-				itemView.GetComponentInChildren<TextMesh>().text = _data[i].ToString("X");
-				_views.Add(itemView);
+				_views[GetViewIndex(0, i)] = Enter(_data[i]);
 			}
+		}
+		private int GetViewIndex(int target, int dataIndex)
+		{
+			int delta = (target - dataIndex) * -1;
+			int viewIndex = delta + _limitSide;
+			return viewIndex;
 		}
 		public void Next()
 		{
-			if (_current < _views.Count - 1)
+			if (_current < _data.Count - 1)
 			{
 				FlowSnap(_current + 1);
 			}
@@ -146,7 +237,7 @@ namespace ca.HenrySoftware.Flow
 		}
 		protected void OnGUI()
 		{
-			float size = 64.0f;
+			const float size = 64.0f;
 			Vector2 offset = new Vector2(10.0f, 10.0f);
 			if (GUI.Button(new Rect(offset.x, offset.y, size, size), "<"))
 			{
@@ -160,7 +251,7 @@ namespace ca.HenrySoftware.Flow
 			offset.y += size + offset.x;
 			var centeredStyle = GUI.skin.GetStyle("Box");
 			centeredStyle.alignment = TextAnchor.MiddleCenter;
-			string text = string.Format("{0}/{1}", _current + 1, _views.Count);
+			string text = string.Format("{0}/{1}", _current + 1, _data.Count);
 			GUI.Box(new Rect(offset.x, offset.y, size, size), text, centeredStyle);
 		}
 	}
