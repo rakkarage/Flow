@@ -4,7 +4,7 @@ using UnityEngine;
 namespace ca.HenrySoftware.Flow
 {
 	public class StartSignal : Signal { }
-	public class FlowStartCommand : Command
+	public class StartCommand : Command
 	{
 		public override void Execute()
 		{

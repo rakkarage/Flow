@@ -11,8 +11,8 @@ namespace ca.HenrySoftware.Flow
 		public float TimeInertia = 0.5f;
 		public int Offset = 1;
 		public bool Clamp = true;
-		private int _clamp;
 		private int _current;
+		private float _currentPan;
 		private const int _limitSide = 4;
 		private const int _limit = (_limitSide * 2) + 1;
 		private List<int> _data = Enumerable.Range(111, 10).ToList();
@@ -27,7 +27,6 @@ namespace ca.HenrySoftware.Flow
 			ItemViewPool.instanceProvider = new ItemViewProvider(transform, Offset);
 			ItemViewPool.inflationType = PoolInflationType.INCREMENT;
 			Load();
-			_clamp = _data.Count * Offset + 1;
 		}
 		public int GetClosestIndex()
 		{
@@ -140,7 +139,7 @@ namespace ca.HenrySoftware.Flow
 		}
 		public void FlowPan(float offset)
 		{
-			GameObject[] newViews = new GameObject[] { null };
+			List<GameObject> newViews = Enumerable.Repeat((GameObject)null, _limit).ToList();
 			for (int i = 0; i < _data.Count; i++)
 			{
 				//Vector3 p = _views[i].transform.localPosition;
@@ -149,13 +148,12 @@ namespace ca.HenrySoftware.Flow
 				//bool wasVisible = IsVisible(i);
 				//bool isVisible = IsVisible(newX);
 
-				if (IsVisible(i))
+				if (i == 5)
 				{
-					int delta = ((int)offset - i) * -1;
-					int viewIndex = delta + _limitSide;
-					int oldDelta = (_current - i) * -1;
-					int oldViewIndex = oldDelta + _limitSide;
-					Debug.Log(i + ":" + delta + ":" + viewIndex + ":" + oldDelta + ":" + oldViewIndex);
+					_currentPan += offset;
+					int viewIndex = GetViewIndex((int)(_current + _currentPan));
+					bool isVisible = IsVisible((int)(_current + _currentPan));
+					Debug.Log(i + ":" + _currentPan + ":" + viewIndex + ":" + isVisible);
 				}
 				//if (wasVisible && !isVisible)
 				//{
@@ -173,16 +171,19 @@ namespace ca.HenrySoftware.Flow
 				//	FlowPanItem(newOrder, p.y, newX, negative);
 				//}
 			}
+			_views = newViews;
 		}
-		private float ClampXMin(int index, bool negative)
+		private float ClampXMin(int index, bool negative) // todo: remove dupe!!!
 		{
 			float newIndex = negative ? index : newIndex = _views.Count - index - 1;
-			return -(_clamp - (Offset * newIndex));
+			int clamp = _data.Count * Offset + 1;
+			return -(clamp - (Offset * newIndex));
 		}
-		private float ClampXMax(int index, bool negative)
+		private float ClampXMax(int index, bool negative) // todo: remove dupe!!!
 		{
 			float newIndex = negative ? index : newIndex = _views.Count - index - 1;
-			return _clamp - (Offset * newIndex);
+			int clamp = _data.Count * Offset + 1;
+			return clamp - (Offset * newIndex);
 		}
 		public void Inertia(float velocity)
 		{
@@ -211,9 +212,9 @@ namespace ca.HenrySoftware.Flow
 				_views[GetViewIndex(GetDelta(0, i))] = Enter(_data[i]);
 			}
 		}
-		private bool IsVisible(int dataIndex)
+		private bool IsVisible(int delta)
 		{
-			return (System.Math.Abs(dataIndex) < _limitSide);
+			return System.Math.Abs(delta) < _limitSide;
 		}
 		private int GetViewIndex(int delta)
 		{

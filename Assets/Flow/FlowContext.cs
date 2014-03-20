@@ -30,7 +30,7 @@ namespace ca.HenrySoftware.Flow
 		{
 			base.mapBindings();
 
-			commandBinder.Bind<StartSignal>().To<FlowStartCommand>().Once();
+			commandBinder.Bind<StartSignal>().To<StartCommand>().Once();
 
 			injectionBinder.Bind<NextSignal>().ToSingleton();
 			injectionBinder.Bind<PrevSignal>().ToSingleton();
