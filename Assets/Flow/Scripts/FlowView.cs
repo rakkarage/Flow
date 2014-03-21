@@ -141,18 +141,23 @@ namespace ca.HenrySoftware.Flow
 		}
 		public void FlowPan(float offset)
 		{
-			_currentPan -= offset;
-			Debug.Log(_currentPan);
+			_currentPan += offset;
 			List<GameObject> newViews = Enumerable.Repeat((GameObject)null, _limit).ToList();
 			for (int i = 0; i < _data.Count; i++)
 			{
 				float delta = GetDelta(_currentPan, i);
-				if (i == 0) Debug.Log(delta);
 				int viewIndex = GetViewIndex(delta);
 				float oldDelta = GetDelta(_current, i);
 				int oldViewIndex = GetViewIndex(oldDelta);
 				bool wasVisible = IsVisible(i);
 				bool isVisible = IsVisible(delta);
+				if (i == 0) Debug.Log(
+					delta + " : " +
+					viewIndex + " : " +
+					oldDelta + " : " +
+					oldViewIndex + " : " +
+					wasVisible + " : " +
+					isVisible);
 				if (wasVisible && !isVisible)
 				{
 					Exit(_views[i]);
