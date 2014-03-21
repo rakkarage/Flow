@@ -11,8 +11,7 @@ namespace ca.HenrySoftware.Flow
 		public float TimeInertia = .5f;
 		public int Offset = 1;
 		public bool Clamp = true;
-		private int _current;
-		private float _currentPan;
+		private float _current;
 		private const int _limitSide = 4;
 		private const int _limit = (_limitSide * 2) + 1;
 		private List<int> _data = Enumerable.Range(111, 10).ToList();
@@ -83,7 +82,6 @@ namespace ca.HenrySoftware.Flow
 		}
 		public void FlowSnap(int target)
 		{
-			Debug.Log(target);
 			List<GameObject> newViews = Enumerable.Repeat((GameObject)null, _limit).ToList();
 			for (int i = 0; i < _data.Count; i++)
 			{
@@ -123,14 +121,14 @@ namespace ca.HenrySoftware.Flow
 		private void FlowPanItem(int i, float y, float delta)
 		{
 			Vector3 p;
-			//if (Clamp)
-			//{
-			//	bool negative = delta < 0;
-			//	float clampX = Mathf.Clamp(delta, -ClampX(i, negative), ClampX(i, negative));
-			//	float clampZ = Mathf.Clamp(Mathf.Abs(delta), 0f, ClampX(i, negative));
-			//	p = new Vector3(clampX, y, clampZ);
-			//}
-			//else
+			if (Clamp)
+			{
+				bool negative = delta < 0;
+				float clampX = Mathf.Clamp(delta, -ClampX(i, negative), ClampX(i, negative));
+				float clampZ = Mathf.Clamp(Mathf.Abs(delta), 0f, ClampX(i, negative));
+				p = new Vector3(clampX, y, clampZ);
+			}
+			else
 			{
 				p = new Vector3(delta, y, Mathf.Abs(delta));
 			}
@@ -138,11 +136,11 @@ namespace ca.HenrySoftware.Flow
 		}
 		public void FlowPan(float offset)
 		{
-			_currentPan -= offset;
+			float target = _current - offset;
 			List<GameObject> newViews = Enumerable.Repeat((GameObject)null, _limit).ToList();
 			for (int i = 0; i < _data.Count; i++)
 			{
-				float delta = GetDelta(_currentPan, i);
+				float delta = GetDelta(target, i);
 				int viewIndex = GetViewIndex(delta);
 				float oldDelta = GetDelta(_current, i);
 				int oldViewIndex = GetViewIndex(oldDelta);
@@ -155,13 +153,14 @@ namespace ca.HenrySoftware.Flow
 				else if (isVisible && !wasVisible)
 				{
 					Debug.Log(
-						i + " : " +
-						delta + " : " +
-						viewIndex + " : " +
-						oldDelta + " : " +
-						oldViewIndex + " : " +
-						wasVisible + " : " +
-						isVisible);
+						"i:" + i + " : " +
+						"target:" + target + " : " +
+						"delta:" + delta + " : " +
+						"viewIndex:" + viewIndex + " : " +
+						"oldDelta:" + oldDelta + " : " +
+						"oldViewIndex:" + oldViewIndex + " : " +
+						"isVisible:" + isVisible + " : " +
+						"wasVisible:" + wasVisible);
 					newViews[viewIndex] = Enter(_data[i]);
 				}
 				else if (isVisible)
@@ -173,16 +172,15 @@ namespace ca.HenrySoftware.Flow
 			_views = newViews;
 			for (int i = 0; i < _data.Count; i++)
 			{
-				float delta = GetDelta(_currentPan, i);
+				float delta = GetDelta(target, i);
 				int viewIndex = GetViewIndex(delta);
 				bool isVisible = IsVisible(delta);
 				if (isVisible)
 				{
-					float y = _views[viewIndex].transform.position.y;
-					FlowPanItem(viewIndex, y, delta);
+					FlowPanItem(viewIndex, transform.position.y, delta);
 				}
 			}
-			_current = Mathf.RoundToInt(_currentPan);
+			_current = target;
 		}
 		private float ClampX(int index, bool negative)
 		{
@@ -197,7 +195,6 @@ namespace ca.HenrySoftware.Flow
 		public void InertiaStop()
 		{
 			LeanTween.cancel(gameObject, _tweenInertia);
-			_currentPan = 0f;
 		}
 		private GameObject Enter(int data)
 		{
@@ -218,7 +215,7 @@ namespace ca.HenrySoftware.Flow
 		}
 		private int GetDataIndex(int viewIndex)
 		{
-			return _current - _limitSide + viewIndex;
+			return Mathf.RoundToInt(_current - _limitSide + viewIndex);
 		}
 		private int GetViewIndex(float delta)
 		{
@@ -232,14 +229,14 @@ namespace ca.HenrySoftware.Flow
 		{
 			if (_current < _data.Count - 1)
 			{
-				FlowSnap(_current + 1);
+				FlowSnap(Mathf.RoundToInt(_current) + 1);
 			}
 		}
 		public void Prev()
 		{
 			if (_current > 0)
 			{
-				FlowSnap(_current - 1);
+				FlowSnap(Mathf.RoundToInt(_current) - 1);
 			}
 		}
 		protected void OnGUI()
