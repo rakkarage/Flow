@@ -175,9 +175,6 @@ namespace ca.HenrySoftware.Flow
 			{
 				float delta = GetDelta(_currentPan, i);
 				int viewIndex = GetViewIndex(delta);
-				float oldDelta = GetDelta(_current, i);
-				int oldViewIndex = GetViewIndex(oldDelta);
-				bool wasVisible = IsVisible(i);
 				bool isVisible = IsVisible(delta);
 				if (isVisible)
 				{
