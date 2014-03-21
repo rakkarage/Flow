@@ -338,7 +338,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 18.4668713, y: 11.5470047, z: .00999999978}
+  m_Size: {x: 18.4710236, y: 11.5470047, z: .00999999978}
   m_Center: {x: 0, y: 0, z: 10}
 --- !u!114 &1704976894
 MonoBehaviour:
@@ -406,41 +406,9 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 2143741458}
     m_Modifications:
-    - target: {fileID: 400000, guid: 1f18966a97c8bd4408be9844a6346f26, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 1f18966a97c8bd4408be9844a6346f26, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 1f18966a97c8bd4408be9844a6346f26, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: -2
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 1f18966a97c8bd4408be9844a6346f26, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 1f18966a97c8bd4408be9844a6346f26, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 1f18966a97c8bd4408be9844a6346f26, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: 1f18966a97c8bd4408be9844a6346f26, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6500000, guid: 1f18966a97c8bd4408be9844a6346f26, type: 2}
       propertyPath: m_Size.x
-      value: 18.4668713
-      objectReference: {fileID: 0}
-    - target: {fileID: 11400004, guid: 1f18966a97c8bd4408be9844a6346f26, type: 2}
-      propertyPath: movementThreshold
-      value: .100000001
+      value: 18.4710236
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1f18966a97c8bd4408be9844a6346f26, type: 2}
