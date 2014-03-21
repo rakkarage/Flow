@@ -26,7 +26,10 @@ namespace ca.HenrySoftware.Flow
 		{
 			ItemViewPool.instanceProvider = new ItemViewProvider(transform, Offset);
 			ItemViewPool.inflationType = PoolInflationType.INCREMENT;
-			Load();
+			for (int i = 0; (i < _data.Count) && (i < _limitSide); i++)
+			{
+				_views[GetViewIndex(GetDelta(0, i))] = Enter(_data[i]);
+			}
 		}
 		public int GetClosestIndex()
 		{
@@ -209,13 +212,6 @@ namespace ca.HenrySoftware.Flow
 			LeanTween.cancel(view);
 			view.SetActive(false);
 			ItemViewPool.ReturnInstance(view);
-		}
-		private void Load()
-		{
-			for (int i = 0; (i < _data.Count) && (i < _limitSide); i++)
-			{
-				_views[GetViewIndex(GetDelta(0, i))] = Enter(_data[i]);
-			}
 		}
 		private bool IsVisible(float delta)
 		{
