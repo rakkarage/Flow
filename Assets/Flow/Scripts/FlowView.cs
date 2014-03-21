@@ -123,14 +123,14 @@ namespace ca.HenrySoftware.Flow
 		private void FlowPanItem(int i, float y, float delta)
 		{
 			Vector3 p;
-			if (Clamp)
-			{
-				bool negative = delta < 0;
-				float clampX = Mathf.Clamp(delta, -ClampX(i, negative), ClampX(i, negative));
-				float clampZ = Mathf.Clamp(Mathf.Abs(delta), 0f, ClampX(i, negative));
-				p = new Vector3(clampX, y, clampZ);
-			}
-			else
+			//if (Clamp)
+			//{
+			//	bool negative = delta < 0;
+			//	float clampX = Mathf.Clamp(delta, -ClampX(i, negative), ClampX(i, negative));
+			//	float clampZ = Mathf.Clamp(Mathf.Abs(delta), 0f, ClampX(i, negative));
+			//	p = new Vector3(clampX, y, clampZ);
+			//}
+			//else
 			{
 				p = new Vector3(delta, y, Mathf.Abs(delta));
 			}
@@ -138,7 +138,7 @@ namespace ca.HenrySoftware.Flow
 		}
 		public void FlowPan(float offset)
 		{
-			_currentPan += offset;
+			_currentPan -= offset;
 			List<GameObject> newViews = Enumerable.Repeat((GameObject)null, _limit).ToList();
 			for (int i = 0; i < _data.Count; i++)
 			{
@@ -146,21 +146,22 @@ namespace ca.HenrySoftware.Flow
 				int viewIndex = GetViewIndex(delta);
 				float oldDelta = GetDelta(_current, i);
 				int oldViewIndex = GetViewIndex(oldDelta);
-				bool wasVisible = IsVisible(i);
 				bool isVisible = IsVisible(delta);
-				//if (i == 0) Debug.Log(
-				//	delta + " : " +
-				//	viewIndex + " : " +
-				//	oldDelta + " : " +
-				//	oldViewIndex + " : " +
-				//	wasVisible + " : " +
-				//	isVisible);
+				bool wasVisible = IsVisible(oldDelta);
 				if (wasVisible && !isVisible)
 				{
 					Exit(_views[i]);
 				}
 				else if (isVisible && !wasVisible)
 				{
+					Debug.Log(
+						i + " : " +
+						delta + " : " +
+						viewIndex + " : " +
+						oldDelta + " : " +
+						oldViewIndex + " : " +
+						wasVisible + " : " +
+						isVisible);
 					newViews[viewIndex] = Enter(_data[i]);
 				}
 				else if (isVisible)
@@ -198,8 +199,8 @@ namespace ca.HenrySoftware.Flow
 		}
 		public void InertiaStop()
 		{
-			_currentPan = 0f;
 			LeanTween.cancel(gameObject, _tweenInertia);
+			_currentPan = 0f;
 		}
 		private GameObject Enter(int data)
 		{
