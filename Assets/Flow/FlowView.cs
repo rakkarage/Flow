@@ -73,9 +73,7 @@ namespace ca.HenrySoftware.Flow
 			int found = GetIndex(target);
 			if (found != -1)
 			{
-				float delta = GetDelta(found, _current);
-				int viewIndex = GetViewIndex(delta);
-				FlowSnap(viewIndex);
+				FlowSnap(_current - _limitSide + found);
 			}
 		}
 		private void FlowSnapItemCancel(int viewIndex)
