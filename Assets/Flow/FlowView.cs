@@ -28,7 +28,7 @@ namespace ca.HenrySoftware.Flow
 			ItemViewPool.inflationType = PoolInflationType.INCREMENT;
 			for (int i = 0; (i < _data.Count) && (i < _limitSide); i++)
 			{
-				_views[GetViewIndex(GetDelta(0, i))] = Enter(_data[i]);
+				_views[GetViewIndex(GetDelta(_current, i))] = Enter(_data[i]);
 			}
 		}
 		public int GetClosestIndex()
@@ -39,7 +39,7 @@ namespace ca.HenrySoftware.Flow
 			{
 				if (_views[i])
 				{
-					float distance = (Vector3.zero - _views[i].transform.localPosition).sqrMagnitude;
+					float distance = (gameObject.transform.position - _views[i].transform.localPosition).sqrMagnitude;
 					if (distance < closestDistance)
 					{
 						closestIndex = i;
