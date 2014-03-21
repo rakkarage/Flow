@@ -47,7 +47,7 @@ namespace ca.HenrySoftware.Flow
 					}
 				}
 			}
-			return closestIndex;
+			return GetDataIndex(closestIndex);
 		}
 		public void Flow()
 		{
@@ -66,15 +66,11 @@ namespace ca.HenrySoftware.Flow
 					}
 				}
 			}
-			return found;
+			return GetDataIndex(found);
 		}
 		public void FlowTo(GameObject o)
 		{
-			int found = GetIndex(o);
-			if (found != -1)
-			{
-				FlowSnap(_current - _limitSide + found);
-			}
+			FlowSnap(GetIndex(o));
 		}
 		private void FlowSnapItemCancel(int viewIndex)
 		{
@@ -87,6 +83,7 @@ namespace ca.HenrySoftware.Flow
 		}
 		public void FlowSnap(int target)
 		{
+			Debug.Log(target);
 			List<GameObject> newViews = Enumerable.Repeat((GameObject)null, _limit).ToList();
 			for (int i = 0; i < _data.Count; i++)
 			{
@@ -151,13 +148,13 @@ namespace ca.HenrySoftware.Flow
 				int oldViewIndex = GetViewIndex(oldDelta);
 				bool wasVisible = IsVisible(i);
 				bool isVisible = IsVisible(delta);
-				if (i == 0) Debug.Log(
-					delta + " : " +
-					viewIndex + " : " +
-					oldDelta + " : " +
-					oldViewIndex + " : " +
-					wasVisible + " : " +
-					isVisible);
+				//if (i == 0) Debug.Log(
+				//	delta + " : " +
+				//	viewIndex + " : " +
+				//	oldDelta + " : " +
+				//	oldViewIndex + " : " +
+				//	wasVisible + " : " +
+				//	isVisible);
 				if (wasVisible && !isVisible)
 				{
 					Exit(_views[i]);
@@ -220,6 +217,10 @@ namespace ca.HenrySoftware.Flow
 		private bool IsVisible(float delta)
 		{
 			return Mathf.Abs(delta) < _limitSide;
+		}
+		private int GetDataIndex(int viewIndex)
+		{
+			return _current - _limitSide + viewIndex;
 		}
 		private int GetViewIndex(float delta)
 		{
