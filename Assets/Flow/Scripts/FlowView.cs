@@ -68,9 +68,9 @@ namespace ca.HenrySoftware.Flow
 			}
 			return found;
 		}
-		public void FlowTo(GameObject target)
+		public void FlowTo(GameObject o)
 		{
-			int found = GetIndex(target);
+			int found = GetIndex(o);
 			if (found != -1)
 			{
 				FlowSnap(_current - _limitSide + found);
@@ -187,6 +187,7 @@ namespace ca.HenrySoftware.Flow
 					FlowPanItem(viewIndex, y, delta);
 				}
 			}
+			_current = Mathf.RoundToInt(_currentPan);
 		}
 		private float ClampX(int index, bool negative)
 		{
@@ -222,7 +223,7 @@ namespace ca.HenrySoftware.Flow
 		}
 		private int GetViewIndex(float delta)
 		{
-			return (int)(delta + _limitSide);
+			return Mathf.RoundToInt(delta + _limitSide);
 		}
 		private float GetDelta(float target, int dataIndex)
 		{
