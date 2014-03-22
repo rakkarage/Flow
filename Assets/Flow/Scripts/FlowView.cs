@@ -14,7 +14,7 @@ namespace ca.HenrySoftware.Flow
 		private float _current;
 		private const int _limitSide = 4;
 		private const int _limit = (_limitSide * 2) + 1;
-		private List<int> _data = Enumerable.Range(111, 10).ToList();
+		private List<int> _data = Enumerable.Range(111, 100).ToList();
 		private List<GameObject> _views = Enumerable.Repeat((GameObject)null, _limit).ToList();
 		private List<int> _tweens = Enumerable.Repeat(0, _limit).ToList();
 		private int _tweenInertia;
@@ -27,7 +27,9 @@ namespace ca.HenrySoftware.Flow
 			ItemViewPool.inflationType = PoolInflationType.INCREMENT;
 			for (int i = 0; (i < _data.Count) && (i < _limitSide); i++)
 			{
-				_views[GetViewIndex(GetDelta(_current, i))] = Enter(_data[i]);
+				int viewIndex = GetViewIndex(GetDelta(_current, i));
+				_views[viewIndex] = Enter(i);
+				UpdateName(i, viewIndex);
 			}
 		}
 		public int GetClosestIndex()
@@ -93,11 +95,11 @@ namespace ca.HenrySoftware.Flow
 				bool wasVisible = IsVisible(oldDelta);
 				if (wasVisible && !isVisible)
 				{
-					Exit(_views[oldViewIndex]);
+					Exit(oldViewIndex);
 				}
 				else if (isVisible && !wasVisible)
 				{
-					newViews[viewIndex] = Enter(_data[i]);
+					newViews[viewIndex] = Enter(i);
 				}
 				else if (isVisible)
 				{
@@ -114,6 +116,7 @@ namespace ca.HenrySoftware.Flow
 				if (isVisible)
 				{
 					FlowSnapItem(viewIndex, delta);
+					UpdateName(i, viewIndex);
 				}
 			}
 			_current = target;
@@ -148,11 +151,11 @@ namespace ca.HenrySoftware.Flow
 				bool wasVisible = IsVisible(oldDelta);
 				if (wasVisible && !isVisible)
 				{
-					Exit(_views[i]);
+					Exit(viewIndex);
 				}
 				else if (isVisible && !wasVisible)
 				{
-					newViews[viewIndex] = Enter(_data[i]);
+					newViews[viewIndex] = Enter(i);
 				}
 				else if (isVisible)
 				{
@@ -169,6 +172,7 @@ namespace ca.HenrySoftware.Flow
 				if (isVisible)
 				{
 					FlowPanItem(viewIndex, transform.position.y, delta);
+					UpdateName(i, viewIndex);
 				}
 			}
 			_current = target;
@@ -187,17 +191,25 @@ namespace ca.HenrySoftware.Flow
 		{
 			LeanTween.cancel(gameObject, _tweenInertia);
 		}
-		private GameObject Enter(int data)
+		private void UpdateName(int dataIndex, int viewIndex)
+		{
+			GameObject view = _views[viewIndex];
+			string text = string.Format("{1}[{0:X}]", _data[dataIndex], viewIndex);
+			view.name = text;
+			view.GetComponentInChildren<TextMesh>().text = text;
+		}
+		private GameObject Enter(int dataIndex)
 		{
 			GameObject view = ItemViewPool.GetInstance();
 			view.SetActive(true);
-			view.GetComponentInChildren<TextMesh>().text = data.ToString("X");
 			return view;
 		}
-		private void Exit(GameObject view)
+		private void Exit(int viewIndex)
 		{
+			GameObject view = _views[viewIndex];
 			LeanTween.cancel(view);
 			view.SetActive(false);
+			view.name = string.Empty;
 			ItemViewPool.ReturnInstance(view);
 		}
 		private bool IsVisible(float delta)
