@@ -152,15 +152,6 @@ namespace ca.HenrySoftware.Flow
 				}
 				else if (isVisible && !wasVisible)
 				{
-					Debug.Log(
-						"i:" + i + " : " +
-						"target:" + target + " : " +
-						"delta:" + delta + " : " +
-						"viewIndex:" + viewIndex + " : " +
-						"oldDelta:" + oldDelta + " : " +
-						"oldViewIndex:" + oldViewIndex + " : " +
-						"isVisible:" + isVisible + " : " +
-						"wasVisible:" + wasVisible);
 					newViews[viewIndex] = Enter(_data[i]);
 				}
 				else if (isVisible)
@@ -215,7 +206,7 @@ namespace ca.HenrySoftware.Flow
 		}
 		private int GetDataIndex(int viewIndex)
 		{
-			return Mathf.RoundToInt(_current - _limitSide + viewIndex);
+			return Mathf.RoundToInt(viewIndex - _limitSide + _current);
 		}
 		private int GetViewIndex(float delta)
 		{
@@ -255,7 +246,7 @@ namespace ca.HenrySoftware.Flow
 			offset.y += size + offset.x;
 			var centeredStyle = GUI.skin.GetStyle("Box");
 			centeredStyle.alignment = TextAnchor.MiddleCenter;
-			string text = string.Format("{0}/{1}", _current + 1, _data.Count);
+			string text = string.Format("{0}/{1}", Mathf.RoundToInt(_current) + 1, _data.Count);
 			GUI.Box(new Rect(offset.x, offset.y, size, size), text, centeredStyle);
 		}
 	}
