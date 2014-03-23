@@ -196,8 +196,8 @@ Light:
   m_Enabled: 1
   serializedVersion: 3
   m_Type: 0
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 3
+  m_Color: {r: .623529434, g: .690196097, b: 1, a: 1}
+  m_Intensity: 4
   m_Range: 10
   m_SpotAngle: 37
   m_CookieSize: 10
@@ -212,11 +212,11 @@ Light:
   m_DrawHalo: 0
   m_ActuallyLightmapped: 0
   m_Flare: {fileID: 0}
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_Lightmapping: 1
+  m_Lightmapping: 0
   m_ShadowSamples: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -337,7 +337,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 18.4667168, y: 11.5470047, z: .00999999978}
+  m_Size: {x: 12.6174936, y: 11.5470047, z: .00999999978}
   m_Center: {x: 0, y: 0, z: 10}
 --- !u!114 &1704976894
 MonoBehaviour:
@@ -407,7 +407,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 6500000, guid: 1f18966a97c8bd4408be9844a6346f26, type: 2}
       propertyPath: m_Size.x
-      value: 18.4667168
+      value: 12.6174936
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1f18966a97c8bd4408be9844a6346f26, type: 2}
