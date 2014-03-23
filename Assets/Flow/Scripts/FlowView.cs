@@ -10,11 +10,10 @@ namespace ca.HenrySoftware.Flow
 		public float TimeTween = .333f;
 		public float TimeInertia = .5f;
 		public int Offset = 1;
-		public bool Clamp = true;
 		private float _current;
 		private const int _limitSide = 4;
 		private const int _limit = (_limitSide * 2) + 1;
-		private List<int> _data = Enumerable.Range(111, 100).ToList();
+		private List<int> _data = Enumerable.Range(111, 10).ToList();
 		private List<GameObject> _views = Enumerable.Repeat((GameObject)null, _limit).ToList();
 		private List<int> _tweens = Enumerable.Repeat(0, _limit).ToList();
 		private int _tweenInertia;
@@ -32,46 +31,13 @@ namespace ca.HenrySoftware.Flow
 				UpdateName(i, viewIndex);
 			}
 		}
-		public int GetClosestIndex()
-		{
-			int closestIndex = -1;
-			float closestDistance = float.MaxValue;
-			for (int i = 0; i < _views.Count; i++)
-			{
-				if (_views[i])
-				{
-					float distance = (gameObject.transform.position - _views[i].transform.localPosition).sqrMagnitude;
-					if (distance < closestDistance)
-					{
-						closestIndex = i;
-						closestDistance = distance;
-					}
-				}
-			}
-			return GetDataIndex(closestIndex);
-		}
 		public void Flow()
 		{
-			FlowSnap(GetClosestIndex());
-		}
-		private int GetIndex(GameObject view)
-		{
-			int found = -1;
-			for (int i = 0; i < _views.Count; i++)
-			{
-				if (_views[i])
-				{
-					if (view == _views[i])
-					{
-						found = i;
-					}
-				}
-			}
-			return GetDataIndex(found);
+			FlowSnap(GetClosestViewIndex());
 		}
 		public void FlowTo(GameObject o)
 		{
-			FlowSnap(GetIndex(o));
+			FlowSnap(GetViewIndex(o));
 		}
 		private void FlowSnapItemCancel(int viewIndex)
 		{
@@ -121,21 +87,18 @@ namespace ca.HenrySoftware.Flow
 			}
 			_current = target;
 		}
-		private void FlowPanItem(int i, float y, float delta)
+		private float ClampX(int dataIndex, bool negative)
 		{
-			Vector3 p;
-			if (Clamp)
-			{
-				bool negative = delta < 0;
-				float clampX = Mathf.Clamp(delta, -ClampX(i, negative), ClampX(i, negative));
-				float clampZ = Mathf.Clamp(Mathf.Abs(delta), 0f, ClampX(i, negative));
-				p = new Vector3(clampX, y, clampZ);
-			}
-			else
-			{
-				p = new Vector3(delta, y, Mathf.Abs(delta));
-			}
-			_views[i].transform.localPosition = p;
+			float newIndex = negative ? dataIndex : newIndex = _data.Count - dataIndex - 1;
+			int clamp = _data.Count * Offset + 1;
+			return clamp - (Offset * newIndex);
+		}
+		private Vector3 FlowPanItem(int dataIndex, float delta)
+		{
+			bool negative = delta < 0;
+			float clampX = Mathf.Clamp(delta, -ClampX(dataIndex, negative), ClampX(dataIndex, negative));
+			float clampZ = Mathf.Clamp(Mathf.Abs(delta), 0f, ClampX(dataIndex, negative));
+			return new Vector3(clampX, transform.position.y, clampZ);
 		}
 		public void FlowPan(float offset)
 		{
@@ -171,17 +134,12 @@ namespace ca.HenrySoftware.Flow
 				bool isVisible = IsVisible(delta);
 				if (isVisible)
 				{
-					FlowPanItem(viewIndex, transform.position.y, delta);
+					_views[viewIndex].transform.localPosition = FlowPanItem(i, delta);
 					UpdateName(i, viewIndex);
 				}
 			}
-			_current = target;
-		}
-		private float ClampX(int index, bool negative)
-		{
-			float newIndex = negative ? index : newIndex = _views.Count - index - 1;
-			int clamp = _data.Count * Offset + 1;
-			return clamp - (Offset * newIndex);
+			if ((target >= 0f) && (target < _data.Count))
+				_current = target;
 		}
 		public void Inertia(float velocity)
 		{
@@ -227,6 +185,39 @@ namespace ca.HenrySoftware.Flow
 		private float GetDelta(float target, int dataIndex)
 		{
 			return (target - dataIndex) * -1;
+		}
+		public int GetClosestViewIndex()
+		{
+			int closestIndex = -1;
+			float closestDistance = float.MaxValue;
+			for (int i = 0; i < _views.Count; i++)
+			{
+				if (_views[i])
+				{
+					float distance = (gameObject.transform.position - _views[i].transform.localPosition).sqrMagnitude;
+					if (distance < closestDistance)
+					{
+						closestIndex = i;
+						closestDistance = distance;
+					}
+				}
+			}
+			return GetDataIndex(closestIndex);
+		}
+		private int GetViewIndex(GameObject view)
+		{
+			int found = -1;
+			for (int i = 0; i < _views.Count; i++)
+			{
+				if (_views[i])
+				{
+					if (view == _views[i])
+					{
+						found = i;
+					}
+				}
+			}
+			return GetDataIndex(found);
 		}
 		public void Next()
 		{
