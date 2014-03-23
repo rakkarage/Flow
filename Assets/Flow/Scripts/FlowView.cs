@@ -28,7 +28,7 @@ namespace ca.HenrySoftware.Flow
 			{
 				int viewIndex = GetViewIndex(GetDelta(_current, i));
 				_views[viewIndex] = Enter(i);
-				UpdateName(i, viewIndex);
+				UpdateName(_views[viewIndex], viewIndex, i);
 			}
 		}
 		public void Flow()
@@ -43,10 +43,13 @@ namespace ca.HenrySoftware.Flow
 		{
 			LeanTween.cancel(_views[viewIndex], _tweens[viewIndex]);
 		}
-		private void FlowSnapItem(int viewIndex, float delta)
+		private void FlowSnapItem(GameObject view, float delta, bool instant)
 		{
 			Vector3 to = new Vector3(delta * Offset, 0f, Mathf.Abs(delta) * Offset);
-			_tweens[viewIndex] = LeanTween.moveLocal(_views[viewIndex], to, TimeTween).setEase(LeanTweenType.easeSpring).id;
+			if (instant)
+				view.transform.position = to;
+			else
+				LeanTween.moveLocal(view, to, TimeTween).setEase(LeanTweenType.easeSpring);
 		}
 		public void FlowSnap(int target)
 		{
@@ -66,25 +69,18 @@ namespace ca.HenrySoftware.Flow
 				else if (isVisible && !wasVisible)
 				{
 					newViews[viewIndex] = Enter(i);
+					FlowSnapItem(newViews[viewIndex], delta, true);
 				}
 				else if (isVisible)
 				{
-					FlowSnapItemCancel(viewIndex);
+					FlowSnapItemCancel(oldViewIndex);
 					newViews[viewIndex] = _views[oldViewIndex];
+					FlowSnapItem(newViews[viewIndex], delta, false);
 				}
+				if (isVisible)
+					UpdateName(newViews[viewIndex], viewIndex, i);
 			}
 			_views = newViews;
-			for (int i = 0; i < _data.Count; i++)
-			{
-				float delta = GetDelta(target, i);
-				int viewIndex = GetViewIndex(delta);
-				bool isVisible = IsVisible(delta);
-				if (isVisible)
-				{
-					FlowSnapItem(viewIndex, delta);
-					UpdateName(i, viewIndex);
-				}
-			}
 			_current = target;
 		}
 		private float ClampX(int dataIndex, bool negative)
@@ -135,7 +131,7 @@ namespace ca.HenrySoftware.Flow
 				if (isVisible)
 				{
 					_views[viewIndex].transform.localPosition = FlowPanItem(i, delta);
-					UpdateName(i, viewIndex);
+					UpdateName(_views[viewIndex], viewIndex, i);
 				}
 			}
 			if ((target >= 0f) && (target < _data.Count))
@@ -149,9 +145,8 @@ namespace ca.HenrySoftware.Flow
 		{
 			LeanTween.cancel(gameObject, _tweenInertia);
 		}
-		private void UpdateName(int dataIndex, int viewIndex)
+		private void UpdateName(GameObject view, int viewIndex, int dataIndex)
 		{
-			GameObject view = _views[viewIndex];
 			string text = string.Format("{1}[{0:X}]", _data[dataIndex], viewIndex);
 			view.name = text;
 			view.GetComponentInChildren<TextMesh>().text = text;
