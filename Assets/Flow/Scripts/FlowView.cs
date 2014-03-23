@@ -115,27 +115,19 @@ namespace ca.HenrySoftware.Flow
 				else if (isVisible && !wasVisible)
 				{
 					newViews[viewIndex] = Enter(i);
+					newViews[viewIndex].transform.localPosition = FlowPanItem(i, delta);
 				}
 				else if (isVisible)
 				{
 					FlowSnapItemCancel(viewIndex);
 					newViews[viewIndex] = _views[oldViewIndex];
+					newViews[viewIndex].transform.localPosition = FlowPanItem(i, delta);
 				}
+				if (isVisible)
+					UpdateName(newViews[viewIndex], viewIndex, i);
 			}
 			_views = newViews;
-			for (int i = 0; i < _data.Count; i++)
-			{
-				float delta = GetDelta(target, i);
-				int viewIndex = GetViewIndex(delta);
-				bool isVisible = IsVisible(delta);
-				if (isVisible)
-				{
-					_views[viewIndex].transform.localPosition = FlowPanItem(i, delta);
-					UpdateName(_views[viewIndex], viewIndex, i);
-				}
-			}
-			if ((target >= 0f) && (target < _data.Count))
-				_current = target;
+			_current = target;
 		}
 		public void Inertia(float velocity)
 		{
@@ -147,7 +139,7 @@ namespace ca.HenrySoftware.Flow
 		}
 		private void UpdateName(GameObject view, int viewIndex, int dataIndex)
 		{
-			string text = string.Format("{1}[{0:X}]", _data[dataIndex], viewIndex);
+			string text = string.Format("{0}[{1:X}]", viewIndex, _data[dataIndex]);
 			view.name = text;
 			view.GetComponentInChildren<TextMesh>().text = text;
 		}
